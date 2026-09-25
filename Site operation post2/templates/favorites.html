@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Избранное — Блог Алины Цыгановой</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page">
+        <header class="header">
+            <h1>💋 Блог Алины Цыгановой</h1>
+            <p class="subtitle">Перманентный макияж — избранные посты</p>
+            <nav class="nav">
+                <a href="/">Главная</a>
+                <a href="/favorites">Избранное ⭐</a>
+                <a href="/scheduled">Отложенные ⏰</a>
+            </nav>
+        </header>
+
+        <section class="card">
+            <h2>Избранное ⭐</h2>
+            {% if notice %}
+            <div class="{{ 'notice-ok' if notice_ok else 'error' }}">{{ notice }}</div>
+            {% endif %}
+            {% if items %}
+                {% for item in items %}
+                <div class="fav-item">
+                    <div class="fav-meta">{{ item.created_at.replace('T', ' ')[:16] }} · {{ moods.get(item.mood, {}).get('label', '') }}</div>
+                    {% if item.image_b64 %}
+                    <img class="fav-photo" src="data:image/jpeg;base64,{{ item.image_b64 }}" alt="Фото работы">
+                    {% endif %}
+                    <pre class="post-text">{{ item.text }}</pre>
+                    <div class="btn-row">
+                        <form method="POST" action="/publish">
+                            <textarea name="post_text" hidden>{{ item.text }}</textarea>
+                            <input type="hidden" name="back" value="favorites">
+                            {% if item.image_b64 %}
+                            <textarea name="photo_b64" hidden>{{ item.image_b64 }}</textarea>
+                            {% endif %}
+                            <button type="submit" class="btn-secondary btn-small">Опубликовать ✈</button>
+                        </form>
+                        <form method="POST" action="/favorites/delete">
+                            <input type="hidden" name="id" value="{{ item.id }}">
+                            <button type="submit" class="btn-secondary btn-small">Удалить 🗑</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p class="hint">Пока пусто. Сформируйте пост на главной и нажмите «В избранное ⭐».</p>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог Алины Цыгановой — перманентный макияж</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page">
+        <header class="header">
+            <h1>💋 Блог Алины Цыгановой</h1>
+            <p class="subtitle">Перманентный макияж — вставьте ссылку на работу или напишите тему поста</p>
+            <nav class="nav">
+                <a href="/">Главная</a>
+                <a href="/favorites">Избранное ⭐</a>
+                <a href="/scheduled">Отложенные ⏰</a>
+            </nav>
+        </header>
+
+        <main class="card">
+            <form method="POST" action="/" enctype="multipart/form-data">
+                <label class="field">
+                    <span>Ссылка или тема поста *</span>
+                    <textarea name="product_input" rows="4" placeholder="Вариант 1 — ссылка: https://example.com/rabota&#10;Вариант 2 — тема: уход за губами после перманента">{{ product_input }}</textarea>
+                    <small class="field-hint">Вариант 1 — ссылка, вариант 2 — тема. Или просто загрузите фото ниже.</small>
+                </label>
+
+                <label class="field">
+                    <span>Фото работы (вариант 3)</span>
+                    <input type="file" name="photo" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.tif,.tiff,image/*">
+                    <small class="field-hint">Необязательно, можно вместе с текстом. Подходят: JPG, PNG, GIF, WEBP, BMP, TIFF до 10 МБ.</small>
+                </label>
+
+                <div class="field">
+                    <span>Настроение поста</span>
+                    <div class="moods">
+                        {% for key, m in moods.items() %}
+                        <label class="mood">
+                            <input type="radio" name="mood" value="{{ key }}"
+                                   {% if mood == key %}checked{% endif %}>
+                            {{ m.label }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if error %}
+                <div class="error">{{ error }}</div>
+                {% endif %}
+
+                <button type="submit" class="btn-primary">Сформировать пост</button>
+            </form>
+        </main>
+
+        <section class="card result">
+            <h2>Готовый пост</h2>
+            {% if notice %}
+            <div class="{{ 'notice-ok' if notice_ok else 'error' }}">{{ notice }}</div>
+            {% endif %}
+            {% if post %}
+            {% if photo_b64 %}
+            <img class="post-photo" src="data:image/jpeg;base64,{{ photo_b64 }}" alt="Фото работы">
+            {% endif %}
+            <pre id="post-text" class="post-text">{{ post }}</pre>
+            <div class="btn-row">
+                <button type="button" id="copy-btn" class="btn-secondary">Скопировать пост</button>
+                <button type="button" id="edit-btn" class="btn-secondary">✏️ Редактировать</button>
+                <form method="POST" action="/publish">
+                    <textarea name="post_text" hidden>{{ post }}</textarea>
+                    <textarea name="product_input" hidden>{{ product_input }}</textarea>
+                    <input type="hidden" name="mood" value="{{ mood }}">
+                    {% if photo_b64 %}
+                    <textarea name="photo_b64" hidden>{{ photo_b64 }}</textarea>
+                    {% endif %}
+                    <button type="submit" class="btn-secondary">Опубликовать пост ✈</button>
+                </form>
+                <form method="POST" action="/favorite">
+                    <textarea name="post_text" hidden>{{ post }}</textarea>
+                    <textarea name="product_input" hidden>{{ product_input }}</textarea>
+                    <input type="hidden" name="mood" value="{{ mood }}">
+                    {% if photo_b64 %}
+                    <textarea name="photo_b64" hidden>{{ photo_b64 }}</textarea>
+                    {% endif %}
+                    <button type="submit" class="btn-secondary">В избранное ⭐</button>
+                </form>
+            </div>
+            <div id="copy-message" class="copy-message" hidden>Пост скопирован</div>
+            <div id="edit-message" class="copy-message" hidden>Пост отредактирован</div>
+            <div id="post-editor-wrap" hidden>
+                <label class="field">
+                    <span>Редактирование поста</span>
+                    <textarea id="post-editor" rows="12"></textarea>
+                </label>
+                <div class="btn-row">
+                    <button type="button" id="save-btn" class="btn-secondary">Сохранить ✅</button>
+                    <button type="button" id="cancel-btn" class="btn-secondary">Отмена</button>
+                </div>
+            </div>
+            <form method="POST" action="/schedule" class="schedule-form">
+                <textarea name="post_text" hidden>{{ post }}</textarea>
+                <textarea name="product_input" hidden>{{ product_input }}</textarea>
+                <input type="hidden" name="mood" value="{{ mood }}">
+                {% if photo_b64 %}
+                <textarea name="photo_b64" hidden>{{ photo_b64 }}</textarea>
+                {% endif %}
+                <label class="field">
+                    <span>Отложить публикацию</span>
+                    <input type="datetime-local" name="send_at">
+                    <small class="field-hint">Пост выйдет сам в выбранное время, с фото — если оно приложено.</small>
+                </label>
+                <button type="submit" class="btn-secondary">Отложить ⏰</button>
+            </form>
+            {% else %}
+            <p class="hint">Здесь появится текст поста после нажатия кнопки «Сформировать пост».</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <script>
+        // Кнопка «Скопировать пост»: копирует готовый текст и показывает «Пост скопирован»
+        const copyBtn = document.getElementById("copy-btn");
+        if (copyBtn) {
+            copyBtn.addEventListener("click", async () => {
+                const text = document.getElementById("post-text").innerText;
+                try {
+                    await navigator.clipboard.writeText(text);
+                } catch (e) {
+                    // Запасной вариант для старых браузеров
+                    const temp = document.createElement("textarea");
+                    temp.value = text;
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(temp);
+                }
+                const msg = document.getElementById("copy-message");
+                msg.hidden = false;
+            });
+        }
+
+        // Кнопка «✏️ Редактировать»: открывает текстовое поле вместо поста.
+        // «Сохранить» обновляет пост на экране И скрытые поля кнопок,
+        // поэтому дальше публикуется / откладывается уже новый текст.
+        const editBtn = document.getElementById("edit-btn");
+        if (editBtn) {
+            const pre = document.getElementById("post-text");
+            const wrap = document.getElementById("post-editor-wrap");
+            const editor = document.getElementById("post-editor");
+            const editMsg = document.getElementById("edit-message");
+            editBtn.addEventListener("click", () => {
+                editor.value = pre.innerText;
+                pre.hidden = true;
+                editBtn.hidden = true;
+                editMsg.hidden = true;
+                wrap.hidden = false;
+            });
+            document.getElementById("cancel-btn").addEventListener("click", () => {
+                wrap.hidden = true;
+                pre.hidden = false;
+                editBtn.hidden = false;
+            });
+            document.getElementById("save-btn").addEventListener("click", () => {
+                const text = editor.value;
+                pre.innerText = text;
+                // Обновляем ВСЕ скрытые копии текста (публикация, избранное, отложка)
+                document.querySelectorAll('textarea[name="post_text"]').forEach((t) => {
+                    t.value = text;
+                });
+                wrap.hidden = true;
+                pre.hidden = false;
+                editBtn.hidden = false;
+                editMsg.hidden = false;
+            });
+        }
+    </script>
+</body>
+</html>

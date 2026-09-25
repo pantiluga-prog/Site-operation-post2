@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отложенные — Блог Алины Цыгановой</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page">
+        <header class="header">
+            <h1>💋 Блог Алины Цыгановой</h1>
+            <p class="subtitle">Перманентный макияж — отложенные посты</p>
+            <nav class="nav">
+                <a href="/">Главная</a>
+                <a href="/favorites">Избранное ⭐</a>
+                <a href="/scheduled">Отложенные ⏰</a>
+            </nav>
+        </header>
+
+        <section class="card">
+            <h2>Отложенные ⏰</h2>
+            {% if items %}
+                {% for item in items %}
+                <div class="fav-item">
+                    <div class="fav-meta">
+                        Выйдет: {{ item.send_at.replace('T', ' ')[:16] }} ·
+                        {% if item.status == 'pending' %}⏰ ждёт очереди
+                        {% elif item.status == 'sent' %}✅ опубликован {{ item.sent_at.replace('T', ' ')[:16] }}
+                        {% else %}❌ ошибка: {{ item.note }}
+                        {% endif %}
+                    </div>
+                    {% if item.image_b64 %}
+                    <img class="fav-photo" src="data:image/jpeg;base64,{{ item.image_b64 }}" alt="Фото работы">
+                    {% endif %}
+                    <pre class="post-text">{{ item.text }}</pre>
+                    {% if item.status == 'pending' %}
+                    <form method="POST" action="/scheduled/cancel">
+                        <input type="hidden" name="id" value="{{ item.id }}">
+                        <button type="submit" class="btn-secondary btn-small">Отменить</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+            <p class="hint">Пока пусто. Сформируйте пост на главной и нажмите «Отложить ⏰».</p>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

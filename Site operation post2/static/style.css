@@ -1,0 +1,218 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #fff5f7, #fde9ef);
+    color: #2b2b3a;
+}
+
+.page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 16px 48px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.subtitle {
+    color: #666;
+    margin-top: 8px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(80, 80, 160, 0.12);
+    margin-bottom: 20px;
+}
+
+.field {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.field span {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.field input[type="text"],
+.field textarea,
+.field input[type="file"],
+.field input[type="datetime-local"],
+#post-editor {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #d5d7ea;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field input[type="file"]:focus,
+.field input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: #c2517a;
+}
+
+.moods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mood {
+    background: #fbeef3;
+    border-radius: 20px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #c2517a;
+    color: #fff;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.btn-primary:hover { background: #a53e63; }
+
+.btn-secondary {
+    padding: 10px 18px;
+    border: 1.5px solid #c2517a;
+    border-radius: 10px;
+    background: #fff;
+    color: #c2517a;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.btn-secondary:hover { background: #fbeef3; }
+
+.error {
+    background: #ffe9e9;
+    color: #c0392b;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+}
+
+.post-text {
+    background: #fdf4f7;
+    border-radius: 12px;
+    padding: 16px;
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.copy-message {
+    margin-top: 10px;
+    color: #1e9e62;
+    font-weight: 600;
+}
+
+.nav {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    margin: 12px 0 4px;
+}
+
+.nav a {
+    color: #c2517a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.nav a:hover { text-decoration: underline; }
+
+.btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.btn-row .btn-secondary { margin-top: 0; }
+
+.btn-small {
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+.notice-ok {
+    background: #e6f7ee;
+    color: #1e9e62;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-weight: 600;
+}
+
+.fav-item {
+    border-top: 1px solid #f0d9e2;
+    padding: 16px 0;
+}
+
+.fav-meta {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.schedule-form {
+    margin-top: 16px;
+    border-top: 1px solid #f0d9e2;
+    padding-top: 16px;
+}
+
+#post-editor {
+    width: 100%;
+    min-height: 220px;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+#post-editor-wrap { margin-top: 12px; }
+
+.post-photo {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.fav-photo {
+    max-width: 240px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.hint { color: #888; }
+
+.field-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #888;
+    font-weight: 400;
+}
